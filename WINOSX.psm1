@@ -37,11 +37,27 @@ function Show-Notification {
     [Parameter(ValueFromPipeline)]
     $ToastText
   )
-  if (-not (Get-Module -ListAvailable -Name BurntToast)) {
-    Import-RequiredModule -ModuleName BurntToast
-  }
+
+  Import-RequiredModule -ModuleName BurntToast
 
   New-BurntToastNotification -Text $ToastTitle,$ToastText
+}
+
+
+function Set-AdminProcess {
+    # Verify Running as Admin
+    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+    if (-not $isAdmin) {
+      Write-Host "-- Restarting as Administrator" -ForegroundColor Cyan; Start-Sleep -Seconds 1
+
+      if ($PSVersionTable.PSEdition -eq "Core") {
+        Start-Process pwsh.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+      } else {
+        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+      }
+
+      exit
+    }
 }
 
 # Export only the functions using PowerShell standard verb-noun naming.
