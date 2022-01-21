@@ -1,4 +1,6 @@
 # Implement your module commands in this script.
+
+#Either Import and install or simply import the specified module.
 function Import-RequiredModule {
   param(
     [Parameter(Mandatory = $true)]
@@ -28,6 +30,7 @@ function Import-RequiredModule {
 
 }
 
+#Show Toast notification - only compatible with powershell 5.1
 function Show-Notification {
   [CmdletBinding()]
   param(
@@ -43,7 +46,7 @@ function Show-Notification {
   New-BurntToastNotification -Text $ToastTitle,$ToastText
 }
 
-
+#Make current running script admin
 function Set-AdminProcess {
   # Verify Running as Admin
   $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
@@ -59,6 +62,25 @@ function Set-AdminProcess {
     exit
   }
 }
+
+#Check for pending reboots
+$pendingRebootTests = @(
+  @{
+    Name = 'RebootPending'
+    Test = { Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing' Name 'RebootPending' -ErrorAction Ignore }
+    TestType = 'ValueExists'
+  }
+  @{
+    Name = 'RebootRequired'
+    Test = { Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update' Name 'RebootRequired' -ErrorAction Ignore }
+    TestType = 'ValueExists'
+  }
+  @{
+    Name = 'PendingFileRenameOperations'
+    Test = { Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager' -Name 'PendingFileRenameOperations' -ErrorAction Ignore }
+    TestType = 'NonNullValue'
+  }
+)
 
 # Export only the functions using PowerShell standard verb-noun naming.
 # Be sure to list each exported functions in the FunctionsToExport field of the module manifest file.

@@ -4,14 +4,20 @@ Import-RequiredModule -Name @("Requirements")
 
 $requirements = @(
   @{
-    Describe = "WSL is enabled in Windows"
+    Describe = "Required features are enabled in Windows"
     Test =
     {
-      $(Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux).State -eq 'Enabled'
+      $RequiredFeatures = @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform")
+      if ($(Get-WindowsOptionalFeature -Online -FeatureName $RequiredFeatures).State -eq 'Enabled') {
+        return $true
+      } else {
+        return $false
+      }
+
     }
     Set =
     {
-      Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+      Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
     }
   },
   @{
