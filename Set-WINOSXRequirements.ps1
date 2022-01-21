@@ -7,11 +7,12 @@ $requirements = @(
     Describe = "Required features are enabled in Windows"
     Test =
     {
-      $RequiredFeatures = @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform")
-      if ($(Get-WindowsOptionalFeature -Online -FeatureName $RequiredFeatures).State -eq 'Enabled') {
-        return $true
-      } else {
-        return $false
+      @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform").ForEach{
+        if ($(Get-WindowsOptionalFeature -Online -FeatureName $_).State -eq 'Enabled') {
+          return $true
+        } else {
+          return $false
+        }
       }
 
     }
