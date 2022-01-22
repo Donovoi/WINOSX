@@ -23,7 +23,7 @@ function Import-RequiredModule {
       }
     } catch {
       Write-Output "Can't install $Module. See Error Below:"
-      Write-Out "$_"
+      Write-Output "$_"
     }
 
   }
