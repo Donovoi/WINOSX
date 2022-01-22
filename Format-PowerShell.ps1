@@ -28,5 +28,5 @@ function Import-RequiredModule {
 }
 
 Import-RequiredModule -ModuleName Powershell-Beautifier
-$files = Get-ChildItem *.ps*
+$files = Get-ChildItem *.ps* -Recurse
 $files.ForEach{ Edit-DTWBeautifyScript -SourcePath $_ }
