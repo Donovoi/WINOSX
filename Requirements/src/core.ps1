@@ -3,7 +3,7 @@
 param()
 
 $ErrorActionPreference = "Stop"
-. "$PSScriptRoot\types.ps1"
+#. "$PSScriptRoot\types.ps1"
 
 $NamespaceDelimiter = ":"
 

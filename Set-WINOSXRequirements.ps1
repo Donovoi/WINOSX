@@ -1,5 +1,5 @@
 Import-Module .\WINOSX.psm1
-
+Remove-Module -Name "$PSScriptRoot\Requirements\Requirements.psd1"
 Import-RequiredModule -ModuleName @("$PSScriptRoot\Requirements\Requirements.psd1") -Verbose
 
 $requirements = @(
