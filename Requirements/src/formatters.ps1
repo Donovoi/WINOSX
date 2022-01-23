@@ -5,7 +5,7 @@ using namespace System.Collections.Generic
 param()
 
 $ErrorActionPreference = "Stop"
-. "$PSScriptRoot\types.ps1"
+#. "$PSScriptRoot\types.ps1"
 
 function writePending ($timestamp,$requirement) {
   $symbol = " "
