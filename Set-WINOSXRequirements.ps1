@@ -10,18 +10,18 @@ $requirements = @(
     Test =
     {
       #Check if Virtualzation is enabled in the BIOS
-      
-# Download the intel utitilty to check if virtualization is enabled
-if (-Not (Test-Path -Path "$PSScriptRoot\Utilities")) {
-  New-Item -Path "$PSScriptRoot\Utilities" -Type Directory -Force 
-}
-$ProgressPreference = 'SilentlyContinue'
-Invoke-webrequest -URI "https://downloadmirror.intel.com/28539/Intel%20Processor%20Identification%20Utility.exe" -UseBasicParsing -OutFile "$PSScriptRoot\Utilities\IntelUtility.exe"
-Out-Host -InputObject "Downloaded Intel Utility"
-Out-Host -InputObject "Running Intel Utility to check if virtualization is enabled in the BIOS"
-$IntelProcess = Start-Process -FilePath "$PSScriptRoot\Utilities\IntelUtility.exe"
-#Stop-Process -Name $IntelProcess.Name -Force
-#Remove-Item -Path "$PSScriptRoot\Utilities\IntelUtility.exe" -Force 
+
+      # Download the intel utitilty to check if virtualization is enabled
+      if (-not (Test-Path -Path "$PSScriptRoot\Utilities")) {
+        New-Item -Path "$PSScriptRoot\Utilities" -Type Directory -Force
+      }
+      $ProgressPreference = 'SilentlyContinue'
+      Invoke-WebRequest -Uri "https://downloadmirror.intel.com/28539/Intel%20Processor%20Identification%20Utility.exe" -UseBasicParsing -OutFile "$PSScriptRoot\Utilities\IntelUtility.exe"
+      Out-Host -InputObject "Downloaded Intel Utility"
+      Out-Host -InputObject "Running Intel Utility to check if virtualization is enabled in the BIOS"
+      $IntelProcess = Start-Process -FilePath "$PSScriptRoot\Utilities\IntelUtility.exe"
+      #Stop-Process -Name $IntelProcess.Name -Force
+      #Remove-Item -Path "$PSScriptRoot\Utilities\IntelUtility.exe" -Force 
 
 
       @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform").ForEach{
