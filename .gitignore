@@ -1,2 +1,5 @@
 .vscode/*
 Utilities/IntelUtility.exe
+*.pspp
+Commando-vm/*
+boxstarter/*

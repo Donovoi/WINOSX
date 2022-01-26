@@ -3,27 +3,20 @@ Remove-Module -Name "$PSScriptRoot\Requirements\Requirements.psd1" -ErrorAction 
 #Import-RequiredModule -ModuleName @("$PSScriptRoot\Requirements\Requirements.psd1") -Verbose
 Import-Module -Name "$PSScriptRoot\Requirements\Requirements.psd1"
 
+# make sure script doesnt fail when downloading
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
 $requirements = @(
+  @{
+    Describe = "We are running as an Administrator"
+    Set = {
+      Set-AdminProcess
+    }
+  },
   @{
     Describe = "Required features are enabled in Windows"
     Test =
     {
-      #Check if Virtualzation is enabled in the BIOS
-
-      # Download the intel utitilty to check if virtualization is enabled
-      if (-not (Test-Path -Path "$PSScriptRoot\Utilities")) {
-        New-Item -Path "$PSScriptRoot\Utilities" -Type Directory -Force
-      }
-      $ProgressPreference = 'SilentlyContinue'
-      Invoke-WebRequest -Uri "https://downloadmirror.intel.com/28539/Intel%20Processor%20Identification%20Utility.exe" -UseBasicParsing -OutFile "$PSScriptRoot\Utilities\IntelUtility.exe"
-      Out-Host -InputObject "Downloaded Intel Utility"
-      Out-Host -InputObject "Running Intel Utility to check if virtualization is enabled in the BIOS"
-      $IntelProcess = Start-Process -FilePath "$PSScriptRoot\Utilities\IntelUtility.exe"
-      #Stop-Process -Name $IntelProcess.Name -Force
-      #Remove-Item -Path "$PSScriptRoot\Utilities\IntelUtility.exe" -Force 
-
-
       @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform").ForEach{
         if ($(Get-WindowsOptionalFeature -Online -FeatureName $_).State -eq 'Enabled') {
           return $true
@@ -39,16 +32,29 @@ $requirements = @(
         Enable-WindowsOptionalFeature -Online -FeatureName $_ -NoRestart
       }
     }
+  },
+  @{
+    Describe = "Chocolatey is installed"
+    Test = { if (-not (Get-Command docker | Out-Null))
+      {
+        return $false
+      }
+    }
+    Set = {
+
+    }
+  },
+  @{
+    Describe = "Docker is installed"
+    Test = { if (-not (Get-Command docker | Out-Null))
+      {
+        return $false
+      }
+    }
+    Set = {
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    }
   }
-  #,
-  # @{
-  #   Describe = "Resource 2 is present in the system"
-  #   Test = { $mySystem -contains 2 }
-  #   Set = {
-  #     $mySystem.Add(2) | Out-Null
-  #     Start-Sleep 1
-  #   }
-  # },
   # @{
   #   Describe = "Resource 3 is present in the system"
   #   Test = { $mySystem -contains 3 }
@@ -59,4 +65,9 @@ $requirements = @(
   # }
 )
 
-$requirements | Invoke-Requirement
+if (-not (Get-Command Invoke-Requirement -ErrorAction SilentlyContinue)) {
+  Out-Host -InputObject "using this"
+  Import-Module -Name "$PSScriptRoot\Requirements\Requirements.psd1" -Force -Verbose
+}
+
+$requirements | Invoke-Requirement | Format-Checklist

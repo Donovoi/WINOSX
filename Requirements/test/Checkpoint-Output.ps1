@@ -18,7 +18,7 @@ $OutRoot = "$PSScriptRoot/integration"
   Set = { New-Item -ItemType Directory -Path $OutRoot }
 } | Invoke-Requirement | Out-Null
 
-$context = @{ count = 0 }
+$context = @{ Count = 0 }
 
 $Requirements = @{
   Test = @{
@@ -34,12 +34,12 @@ $Requirements = @{
   TestSet = @{
     Namespace = "ns"
     Describe = "MyDescribe"
-    Test = { $context.count++ % 2 -eq 1 }
+    Test = { $context.Count++ % 2 -eq 1 }
     Set = { $true }
   }
 }
 
-$Requirements.Keys `
+$Requirements.KEYS `
    | ForEach-Object {
   $events = $Requirements[$_] | Invoke-Requirement
   $events | Format-Checklist *> "$OutRoot/Format-Checklist.$_.txt"

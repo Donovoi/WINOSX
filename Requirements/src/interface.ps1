@@ -158,7 +158,7 @@ function New-RequirementGroup {
 
   $Requirement `
      | ForEach-Object {
-    $r = $_.psobject.Copy()
+    $r = $_.PSObject.Copy()
     $r.Namespace = ($Name,$r.Namespace | Where-Object { $_ }) -join $NamespaceDelimiter
     $r
   }
