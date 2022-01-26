@@ -48,7 +48,7 @@ Describe "formatters" {
       $output | ForEach-Object { $_ | Should -Match "^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d +\w+ +\w+ .+" }
     }
     It "Should print 6 lines" {
-      $output.count | Should -Be 6
+      $output.Count | Should -Be 6
     }
   }
 }
