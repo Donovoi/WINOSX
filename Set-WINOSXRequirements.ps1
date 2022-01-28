@@ -30,6 +30,10 @@ $requirements = @(
     {
       @("Microsoft-Windows-Subsystem-Linux","VirtualMachinePlatform").ForEach{
         Enable-WindowsOptionalFeature -Online -FeatureName $_ -NoRestart
+        #Check for pending reboots
+        if ($(Get-PendingReboot).RebootPending) {
+
+        }
       }
     }
   },
@@ -41,6 +45,7 @@ $requirements = @(
       }
     }
     Set = {
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
     }
   },
@@ -52,7 +57,6 @@ $requirements = @(
       }
     }
     Set = {
-      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     }
   }
   # @{

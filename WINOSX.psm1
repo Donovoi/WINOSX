@@ -65,18 +65,13 @@ function Set-AdminProcess {
 
 #Check for pending reboots
 <#
-.SYNOPSIS
-	This script tests various registry values to see if the local computer is pending a reboot
-.NOTES
-	Created:   	    March, 2021
-	Created by:	    Phil Helmling, @philhelmling
-	Organization:   VMware, Inc.
-	Filename:       Test-PendingReboot.ps1
-	Inspiration from: https://devblogs.microsoft.com/scripting/determine-pending-reboot-statuspowershell-style-part-1/ 
-    and https://adamtheautomator.com/pending-reboot-registry/ (https://github.com/adbertram/Random-PowerShell-Work/blob/master/Random%20Stuff/Test-PendingReboot.ps1)
-    Exits with exitcode 1 if there is a pending reboot
-.EXAMPLE
-	PS> Test-PendingReboot.ps1
+***********************************************************************************
+*   This function was written by Brian Wilhite
+*   Published at https://gallery.technet.microsoft.com/scriptcenter/Get-PendingReboot-Query-bdb79542
+*	Version: 07/27/2015
+*   Distributed according to Technet Terms of Use
+*   https://technet.microsoft.com/en-us/cc300389.aspx
+***********************************************************************************
 #>
 function Get-PendingReboot
 {
@@ -300,6 +295,9 @@ function Get-PendingReboot
 } ## End Function Get-PendingReboot
 
 
+
+#Run once reg key include this for reboots
+Set-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name '!RegisterDNS' -Value "c:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe -noexit -command 'Register-DnsClient'"
 
 # Export only the functions using PowerShell standard verb-noun naming.
 # Be sure to list each exported functions in the FunctionsToExport field of the module manifest file.
